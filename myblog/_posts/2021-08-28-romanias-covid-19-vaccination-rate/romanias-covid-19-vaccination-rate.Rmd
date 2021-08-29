@@ -1,0 +1,161 @@
+---
+title: "Romania's Covid-19 vaccination rate"
+description: |
+  Let's not forget about Romania amidst the pandemic!
+author:
+  - name: Hoang Phong (Alex) Nguyen
+date: 08-28-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Data Description
+
+The dataset was collected from [Our World in Data repo](https://github.com/owid/covid-19-data/tree/master/public/data)
+
+Although the dataset provides information on almost every countries, the scope of this entry will focus primarily on data from Romania, particularly on vaccination rate in Romania. Most variables are self-explanatory, however, some variables may need clarifications are:
+
+*reproduction rate*: The rating of coronavirus's ability to spread, R = 2 means an infected person will spread to 2 more people
+
+*stringency_index*: This is a measure of the stringency of government's adopted measure to combat the spread of Covid-19. The scale of value is from 0-100, the higher it is the more stringent the government's policy is at the time of measure.
+
+*new_cases_smoothed*: daily new cases taking into account 7-day moving average
+
+*new_death_smoothed*: daily deaths taking into account 7-day moving average
+
+*new_vaccinations_smoothed*: daily vaccination doses administered taking into account 7-day moving average
+
+*total_vaccinations_per_hundred*: total vaccination doses administered per 100 people in the population
+
+*people_vaccinated_per_hundred*: number of people received at least a dose of vaccine per 100 people in population
+
+*people_fully_vaccinated_per_hundred*: number of people received 2 doses of vaccine per 100 people in population
+
+# 
+
+```{r}
+library(tidyverse)
+library(DT)
+library(skimr)
+library(lubridate)
+library(kableExtra)
+library(formattable)
+```
+
+```{r}
+df <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+```
+
+
+```{r}
+df_tidy <- df %>% 
+  filter(continent == "Europe") %>% 
+  select(c(location, date, total_cases, new_cases_smoothed, total_deaths,
+           new_deaths_smoothed, total_cases_per_million,
+           total_deaths_per_million, reproduction_rate,
+           total_vaccinations_per_hundred, people_vaccinated_per_hundred,
+           people_fully_vaccinated_per_hundred, new_vaccinations_smoothed,
+           stringency_index)) 
+```
+
+```{r}
+df_comp <- df_tidy %>% 
+  filter(str_detect(date, "22")) %>% 
+  filter(date > "2020-12-22")  
+```
+
+
+```{r}
+df_month <- df_comp %>% 
+  mutate(date = months(date)) %>% 
+  select(c(location, date, total_vaccinations_per_hundred)) %>% 
+  pivot_wider(names_from = date,
+              values_from = total_vaccinations_per_hundred) %>% 
+  arrange(desc(August)) %>% 
+  filter(!is.na(August))
+```
+
+# Important figures
+
+Let's kick the post off with an update on the Covid-19 status of Romania. The total number of cases in Romania is a little over 1 million, this is not a small number but compared to other European countries, the number of cases is not alarmingly high. However, a concerning fact is that vaccination rate in Romania is on the lower end as only 50 doses of vaccine were administered per 100 people, as compared to other European countries at around 110 doses. One strange aspect of Romania policy is the prioritisation of full vaccination rather than mass injection of first dose. Evidently, the table below shows number of people having at least a dose and number of people fully vaccinated are roughly equal (at 25%)
+
+```{r}
+df_rou <- df_tidy %>% filter(location=="Romania")
+```
+
+```{r}
+df_ds <- df_rou %>% filter(date == "2021-08-25") %>% 
+  select(c( total_cases,
+            total_cases_per_million,
+            total_deaths, 
+            total_deaths_per_million,
+            total_vaccinations_per_hundred,
+            people_vaccinated_per_hundred,
+            people_fully_vaccinated_per_hundred))%>% 
+  pivot_longer(cols = everything(),
+               names_to = 'variable',
+               values_to = 'value')
+
+datatable(df_ds) %>% 
+  formatCurrency("value", currency = "", interval = 3, mark = ",", digits = 2)
+```
+
+
+# Some descriptive statistics
+
+The summary statistic is describing data over the time frame from 26th February 2020 to 27th August 2021. Over this period, the mean daily case smoothed is 2,000 per day and mean number of deaths smoothed is about 63. The reproduction rate of Covid-19 in Romania is at around 1, this is on par with other European countries. According to the BBC, if no action was taken to stop the spreading of Covid-19, the reproduction rate is 3. The stringency index at about 58 out of 100 means that Romania did implement public closure measures to some degree to keep the contamination under control.
+
+```{r}
+df_ss <- df_rou %>% select(!c(location, date, total_cases, 
+                              total_deaths, total_deaths_per_million,
+                              total_vaccinations_per_hundred,
+                              total_cases_per_million,
+                              people_vaccinated_per_hundred,
+                              people_fully_vaccinated_per_hundred)) %>% 
+  summarise(across(.fns = list(means = mean, sds = sd, min = min, 
+                               max = max, medians = median, iqr = IQR), 
+                   na.rm = TRUE, 
+                   .names = '{col}.{fn}')) %>% 
+  pivot_longer(cols = everything(), 
+               names_to = c('variable', '.value'), 
+               names_sep = '\\.') 
+datatable(df_ss) %>% 
+  formatCurrency(2:6, currency = "", interval = 3, mark = ",", digits = 2)
+```
+
+
+
+```{r}
+datatable(df_month, class = "display",
+          caption = "Covid-19 vaccination dose administered per 100 people in European countries in 2021")
+```
+
+
+
+This table compares the vaccination rate of countries per 100 people in Europe eversince the mass availability of vaccines at the beginning of 2021. The data table compiled the vaccination rate of every countries on the 22nd of each month. Ideally, for the whole population to be fully vaccinated, the rate should be 200 (2 shots for each person).
+
+Upon first glance at the table, it is quite surprising that, despite being one of the earliest countries in Europe to adopt vaccinations, Romania is notably lagging behind. Initially when vaccines start rolling out in January, the country is still in general doing a decent job in keeping up with the other European countries. Particularly, in January and early February, Romania is even displaying some promising traits when their vaccination rate is among the top end countries in Europe. However, starting from April, the vaccination rate of Romania starts to fall behind in comparison to other countries' schedule. By 22nd of August, when most of European countries has had vaccination rate of more than 100, Romania is among the countries with lowest vaccination rate, at 50.55 per 100 people. A little bit of research on Romania state of affair and social survey can be eye-opening and offers some possible answers for this perculiar event.
+
+**Bad institution**
+
+Possibly one of the main reasons that hinder Romania's ability to effectively deliver innoculation shots to households are due to insufficient spending on healthcare. According to data from World Bank, by 2018, the average healthcare spending of the European Union is almost 10% GDP, while in Romania, the number is only 5.5%. The lack of healthcare spending coupled with the low transparency in public sector further exacerbates the problem. It probably doesn't help that early February 2021, Matei Bals hospital in Bucharest, one of the largest hospital in the capital and also the centre for Covid-19 treatment, is set ablaze. According to Euronews, the hospital was under pressure, having to support large amount of patients with outdated infrastructure, overloaded electrical circuits. And this is the second hospital fire to have occurred in Romania within the span of only 3 months.
+
+**General mistrust**
+
+Additionally, rampant corruptions and inefficiencies in public sector have caused many healthcare professionals to migrate to other EU countries seeking better working conditions. The result is a lack of trust in both public policy and in healthcare campaigns. In a study investigate the perspective of parents on Covid-19 vaccination for their children, only 32.57% intended to vaccinate their children. Almost 50% stated that they do not consider vaccine as necessary, while more than 20% do not trust vaccines (Sandu et al., 2021).
+
+As a result, despite Romanian government having vaccines ready to be dispatched, the low vaccination rate and the vaccine rejection sentiment of the general public has lead to Romanian government having to sold 700,000 doses to Ireland in August, following a similar case of selling a million Pfizer doses to Denmark earlier in June
+
+
+# Citations
+
+Mathieu, E., Ritchie, H., Ortiz-Ospina, E. et al. A global database of COVID-19 vaccinations. Nat Hum Behav (2021). https://doi.org/10.1038/s41562-021-01122-8
+
+Euronews. (2021, February 5). “Neglect, ignorance and corruption”: Why Romania has had two deadly hospital fires in three months. https://www.euronews.com/2021/02/05/why-has-romania-had-two-deadly-hospital-fires-in-a-matter-of-months
+
+Sandu, P., Rajka, D., Pintea, A., Moldovan, K., Pintea, S., & l Pop, T. (2021). Factors that can influence in Romania the parents decision regarding anti Covid-19 vaccination of children and adolescent aged 12–15. The Journal of School and University Medicine, 08(02). https://doi.org/10.51546/jsum.2021.8204

@@ -1,0 +1,22 @@
+table.dataTable.display tbody tr.odd {
+  background-color: #EBAAB0;
+}
+
+table.dataTable.display tbody tr.odd {
+  background-color: #F3E1C0;
+}
+
+div.datatables {
+  color: #275070;
+  border: 15px solid #275070;
+  border-radius: 5px;
+}
+
+table {
+  table-layout: fixed; 
+  width: 100%
+}
+
+td {
+  word-wrap: break-word;
+}
