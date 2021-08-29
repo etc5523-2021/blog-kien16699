@@ -1,0 +1,20 @@
+{
+  "articles": [
+    {
+      "path": "about.html",
+      "title": "You say day-ta, I say dah-ta",
+      "description": "Let's call the whole thing off (but that'll break my heart)",
+      "author": [],
+      "contents": "\nWell hello there, I’m surprised you’d even take the time to explore this page. Unfortunately, I’m a very bland person, so really, there’s no use in expecting exciting contents here. However, if for whatever reason you still insist on knowing something about me, then here goes:\nMy name’s Phong, pronounced as Fong, which means ‘wind’ in Chinese, the English version of my full name is Hoang Phong Nguyen. But I’m a Vietnamese tho, the Chinese part is a long history dated back to a few hundred years ago when Vietnam is mostly occupied by the Chinese and so, we adopt Chinese names. That’s about as Chinese as I am. But if that’s too complicated, you can simply call me Alex.\nI am currently 22, have studied for 6 years in London. I did my sixth form in the borough of Greenwich, you might have heard about it in the Greenwich Mean Time (GMT), which is named after the Greenwich Royal Observatory on the hill near my school. It was indeed one of the best neighbourhoods in London.\nFor my undergraduate, I did BSc Economics at University College London (UCL). That period was a bit turbulent and I’d rather not delve deep into it. But to sum it up, the things and skills that I picked up going through college are: advanced statistics knowledge, Economics research skills, bouldering, intermediate cooking skills, my love for jazz and books, the ability to shamelessly dance to Christmas music mid-October, and most importantly, the value of my sleep.\nI done some job here and there, from low requirement jobs such as waiting tables and salesperson to more formal job experience such as working in finance, in real estate, and a little bit of marketing. But in so far, nothing has particularly caught my interest, so you can probably understand (and possibly excuse) my lack of fondness when retelling the tales of my old jobs. But fret not, because I’m still striving for better opportunities to carpe the diem (Latin is not my strong suit).\nNumerous things have change over the past year, with all the global pandemic and the increasing global political tensions, I’ve decided to move to somewhere a tad bit more peaceful, where I can enjoy my midday cup of Lapsang tea with a splash of semi-skimmed milk and say to myself: “Life’s good”. So, here I am, studying a master course in Business Analytics at Monash, hoping that I can finally settle down somewhere. If you’ve taken your time to read this whole bunch of gibberish, then you already know more about me than 95% of the people I met. Hopefully by the next time you visit, I’ll have something more glam glam to spice up this biography page.\n\n\n\n",
+      "last_modified": "2021-08-29T21:28:19+07:00"
+    },
+    {
+      "path": "index.html",
+      "title": "CWD Blog",
+      "author": [],
+      "contents": "\n\n\n\n",
+      "last_modified": "2021-08-29T21:28:19+07:00"
+    }
+  ],
+  "collections": ["posts/posts.json"]
+}
