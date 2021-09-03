@@ -2,7 +2,7 @@
 
 
 This is the blog of Hoang Phong Nguyen.
-The URL of this blog is https://ilbloggo.netlify.app/posts/2021-08-28-romanias-covid-19-vaccination-rate/
+The URL of this blog is https://ilbloggo.netlify.app
 
 
 ## Blog Post 1
@@ -11,7 +11,7 @@ This assessment is due Fri Sep 3 2021 11.55PM AEST.
 
 My selected country is Romania.
 
-The relevant blog post for this assessment is in /blog-kien16699/myblog/_posts/2021-08-28-romanias-covid-19-vaccination-rate/romanias-covid-19-vaccination-rate.html
+The relevant blog post for this assessment is in https://ilbloggo.netlify.app/posts/2021-08-28-romanias-covid-19-vaccination-rate/
 
 - [ ] Selected a country
 - [ ] Website with R markdown 
