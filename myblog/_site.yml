@@ -3,7 +3,7 @@ title: "CWD Blog"
 theme: theme.css
 description: |
   CWD Blog
-output_dir: "docs"
+output_dir: "_site"
 navbar:
   right:
     - text: "Home"

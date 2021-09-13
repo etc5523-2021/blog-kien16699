@@ -1,0 +1,6 @@
+﻿Domain Code,Domain,Area Code (FAO),Area,Element Code,Element,Item Code,Item,Year Code,Year,Unit,Value,Flag,Flag Description
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2740","Butter, Ghee","2018","2018","kcal/capita/day","95","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2743","Cream","2018","2018","kcal/capita/day","6","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2737","Fats, Animals, Raw","2018","2018","kcal/capita/day","117","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2781","Fish, Body Oil","2018","2018","kcal/capita/day","0","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2782","Fish, Liver Oil","2018","2018","kcal/capita/day","0","Fc","Calculated data"

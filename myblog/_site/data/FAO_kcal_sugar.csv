@@ -1,0 +1,4 @@
+﻿Domain Code,Domain,Area Code (FAO),Area,Element Code,Element,Item Code,Item,Year Code,Year,Unit,Value,Flag,Flag Description
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2542","Sugar (Raw Equivalent)","2018","2018","kcal/capita/day","331","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2543","Sweeteners, Other","2018","2018","kcal/capita/day","12","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2745","Honey","2018","2018","kcal/capita/day","5","Fc","Calculated data"

@@ -1,0 +1,242 @@
+---
+title: "Looks like stroopwafel's back on the menu, boys!"
+description: |
+  A close inspection on the Dutch's diet composition and food security
+author:
+  - name: Hoang Phong (Alex) Nguyen
+    url: {}
+date: 09-12-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library(plotly)
+library(wesanderson)
+library(kableExtra)
+```
+
+
+```{r}
+readFAO <- function(x){
+  loc = glue::glue("data/FAO_kcal_{x}.csv")
+  name <- read_csv(here::here(loc)) %>% 
+    janitor::clean_names() %>% 
+    select(c(area, item, unit, value)) %>% 
+    mutate(group = x)
+  return(name)
+}
+```
+
+# Data description
+
+The data sets regarding diet composition and food security are collected from [Food and Agriculture Organization of the United Nations (FAO)](http://www.fao.org/faostat/en/#data). While the dataset used to construct diet composition analysis is for the year of 2018, one reasonable assumption made is that a country wouldn't drastically change their diet composition if the country had been through some catastrophic event regarding their food source. And in this case the Netherlands haven't so this should be fairly safe to use.
+
+The data set for health and obesity prevalence in the Netherlands is collected from [the Netherlands statistics agency](https://opendata.cbs.nl/statline/portal.html?_la=en&_catalog=CBS&tableId=81628ENG&_theme=1051) which detail the rate of obesity in the Netherlands better than data from FAO.
+
+
+# Set the table
+
+What do you think of when the phrase "Dutch cuisine" comes to your mind? Dutch cheese, Chips with mayo, Stroopwafels, someone who travelled to the Netherlands once or twice might even say liquorice or poffertjes, the mini Dutch pancake. But that's it?
+
+Well pretty much, but there is more to the story than that. Dutch cuisine is not particularly known for their uniqueness or the spectacular taste. But in return, the Dutch enjoy a fairly healthy and balanced diet. Not particularly because what the Dutch consume daily are healthy, but rather because the people of the country follows what is called a Dutch diet guideline. The components of the guideline is found to be fairly similar to a Mediterranean diet. In one case, Van Diepen et al. (2011) found that the Dutch are even adhering better to the Mediterranean  diet than their Greek counterparts.
+
+```{r}
+drink <- readFAO("drink")
+animalfat <- readFAO("animalfat")
+cereal <- readFAO("cereal")
+vegetablefat <- readFAO("vegetablefat")
+fruitveg <- readFAO("fruitveg")
+protein<- readFAO("protein")
+sugar <- readFAO("sugar")
+
+dat <- list(drink, animalfat, cereal, 
+            vegetablefat, fruitveg, 
+            protein, sugar) %>% 
+  reduce(full_join)
+rm(drink, animalfat, cereal, vegetablefat, fruitveg,protein, sugar)
+```
+
+```{r}
+dat2 <- dat %>% group_by(group) %>% 
+  filter(value >= 10) %>% 
+  summarise(value = sum(value))
+
+testdat <- tibble(item = dat2$group,value= dat2$value,group= "")
+
+dat2 <- dat %>% 
+  filter(value >= 10) %>%
+  select(-c(area, unit)) %>% 
+  rbind(testdat)
+
+rm(testdat)
+```
+
+```{r, fig.width= 15, fig.height= 5}
+treemap <- plot_ly(data = dat2,
+        type = "treemap",
+        labels = ~item,
+        parents = ~group,
+        values = ~value,
+        branchvalues="total",
+        textinfo = "label+value+percent root")
+treemap <- treemap %>% 
+  layout(treemapcolorway=c("#FDB560","#57A5B8","#631104",
+                           "#808000","#D2E0DD","#92CF93",
+                           "#0A4C76"),
+         title = "Average diet composition of Dutch in 2018 (kcal/capita/day)")
+treemap
+```
+
+The treemap above divide the regular diet a Dutch consume in the year 2018, which adds up to an average of `r sum(dat2$value)/2` calories per day. The values are displaying the average kilocalories consumed per capita per day and percentage the portion is making up to the whole day calories intake.
+
+Interacting with the treemap, we can see that according to [WHO healthy diet](https://www.who.int/news-room/fact-sheets/detail/healthy-diet), the Dutch are somewhat adhering to the guideline quite alright. The key takeaways from WHO guide are: at least 400g fruit and vegetables per day, less than 10% total energy intake from free sugar, less than 30% fat intake. Looking at the treemap, the Dutch consume roughly 10% of total energy intake from sugar, and 20% from animal and vegetable fats combined. 
+
+The Dutch, along with other highly progressive countries in the European area such as Germany and French, are also pushing for a higher meat tax if these revenue are use to subsidise fruit and vegetable. A study even went on to analyse the effect of meat tax in the Netherlands on healthcare cost and find that a 15% meat tax will have a net social benefit of 3100-7400 million euro over a 30-years period (Broeks et al., 2020).
+
+
+```{r}
+aus_dat <- read_csv(here::here("data/FAO_kcal_aus.csv")) %>%
+  janitor::clean_names() %>% 
+  select(c(item, value))
+
+dat_compare <- left_join(dat, aus_dat, by = "item") %>% 
+  mutate(value = value.x - value.y) %>% 
+  select(c(item, group, value)) %>% 
+  drop_na(value) 
+
+dat_compare <- dat_compare %>% 
+  filter(abs(value) >= 50) %>% 
+  mutate(pos = value >= 0) %>% 
+  mutate(group = recode(group,
+                        animalfat = "animal fat",
+                        vegetablefat = "vegetable fat"))
+```
+
+```{r, fig.width= 10, fig.height= 7}
+dat_compare$item = str_wrap(dat_compare$item, width = 10)
+dat_compare %>% ggplot(aes(x = item, y = value)) +
+  geom_segment(aes(x = fct_reorder(item, group),xend=item, y=0, yend=value, colour= group), 
+               size = 2) +
+  geom_point(aes(fill=pos), size = 5, shape=21) +
+  guides(fill=FALSE) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = "calories",
+       y = "Item",
+       title ="Key difference in diet compositions between the Netherlands and Australia") +
+  theme_minimal() +
+  coord_flip() 
+```
+
+In the interest of seeing how different a typical Dutch diet is as compared to the Australian diet, the plot above shows a lollipop plot comparing the net difference between various diet composition of 2 countries, only taking the largest net difference into account. The 0 line represent an Australian diet and any deviation from 0 is how much more (or less) the Dutch consume a certain item. It's interesting how there are a divergence in preference, such as the Dutch prefers soyabean oil, animal fat and pork while the Australian prefers more palm oil and poultry. Other than that, another main difference is the Dutch consume much less sugar and drink more milk.
+
+
+# You are what you eat
+
+The FAO defines food security as access to food and through it have access to a healthy lifestyle. This makes the Netherlands one of the country with best food security in the world. The data below illustrate food security on 5 scales that is offered by the FAO for the year 2019, all of which is strongly affected by access to food. The data dictionary below explains clearly what the 5 scales are. The data is measured across 4 areas: the Netherlands, Australia, European countries average, and the world average. On 4 out of 5 scales, the Netherlands have the lowest prevalence, except for anemia in women of reporductive age, which is lower than that of Australia. De Jonge et al. (2008) measures the consumer confidence of Dutch people in the safety of food in their country and find that the Dutch have high level of optimism in their food, which is attributed to the fact that they have higher trust in the factors that goes into food production.
+
+```{r}
+foodsec <- read_csv(here::here("data/FAO_foodsecurity.csv")) %>%
+  janitor::clean_names() %>% select(c(area, item, year, unit, value))
+```
+
+```{r}
+foodsec_clean <- foodsec %>% filter(value <= 50 & unit == "%") %>% 
+  filter(!str_detect(item, "annual")) 
+
+datadict <- tibble(item = c("severe food insecurity", 
+                           "moderate food insecurity",
+                           "children stunted",
+                           "children overweight",
+                           "women anemia"), 
+                   dict = unique(foodsec_clean$item))
+dict <- setNames(datadict$item, datadict$dict)
+
+foodsec_clean <- foodsec_clean %>% mutate(item = recode(item, !!!dict))
+
+rm(dict)
+
+datadict %>% kable(caption = "Food security data dictionary") %>% 
+  kable_minimal()
+```
+
+
+```{r, fig.width= 10, fig.height= 7}
+foodsec_clean$item = str_wrap(foodsec_clean$item, width = 10)
+foodsec_clean %>% ggplot(aes(x = item, y = value, 
+                       fill = fct_relevel(area, c("Netherlands",
+                                                  "Australia", 
+                                                  "Europe", 
+                                                  "World")))) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  scale_fill_manual(values = wes_palette("Zissou1", n = 4), name = "Area") +
+  labs(y = "Percentage of prevalence (%)",
+       x = element_blank(),
+       title = "Food security in the Netherlands as compared globally (2018)") +
+  theme_minimal()
+```
+
+
+```{r}
+overweight <- read_delim(here::here(
+  "data/81628ENG_UntypedDataSet_13092021_134208.csv"), delim = ";") %>%
+  janitor::clean_names()
+```
+
+```{r}
+overweight <- overweight %>% 
+  select(c(periods, moderately_overweight20_70, 
+           moderately_overweight420yrs_72, seriously_overweight_obese20_71,
+           seriously_overweight_obese420yrs_73)) %>% 
+  mutate(periods = gsub("JJ00", "", periods),
+         periods = as.factor(periods),
+         adult_overweight_m = moderately_overweight20_70,
+         adult_overweight_s = seriously_overweight_obese20_71,
+         child_overweight_m = moderately_overweight420yrs_72,
+         child_overweight_s = seriously_overweight_obese420yrs_73) %>% 
+  select(-c(matches("[0-9]"))) %>% 
+  pivot_longer(!periods, names_to = "categories",
+               values_to = "value")
+```
+
+At this point you must be asking: well if they have such food security and well-balanced diet, along with well-known for being a cycling nation, it seems like the Dutch got their problems all figured out. But it is not quite so, food security in the Netherlands runs in the direction of excessive rather than shortage. A report by [Wageningen university](https://www.wur.nl/en/Research-Results/Research-Institutes/Economic-Research/show-wecr/Food-security-in-the-Netherlands-robust-with-frayed-edges.htm), well known for their social science research department, have shown that while robust as it is, the Netherlands food security still has it shortcomings such as obesity and over-consumption of red meat.
+
+The plot below illustrate the prevalence of obesity in the Netherlands. *Moderately overweight* in the data is described as having BMI between 25 to 30 $kg/m^2$, while *Seriously overweight* people have BMI higher than 30 $kg/m^2$.
+
+```{r, fig.width= 10, fig.height= 7}
+overweight %>% 
+  ggplot(aes(x = periods, y = value, 
+             colour = categories, group = categories)) +
+  geom_point() +
+  geom_line() +
+  scale_color_manual(values = wes_palette("Zissou1",n = 4), 
+                     labels = c("Moderately overweight adults",
+                                "Seriously overweight adults",
+                                "Moderately overweight children",
+                                "Seriously overweight children")) +
+  theme_minimal() +
+  labs(y = "Percent of population",
+       x = element_blank(),
+       title = "Time series of prevalence of overweight in the Netherlands")
+```
+
+The trend is ever-increasing since 2001 for both groups of adults, which are in shades of blue. By 2020, the percentage of overweight people aged 20 and over in the Netherlands accounts for 48.5% of total population. While overweight in children accounts for 15%. This is surprising, as a country which consume moderate amount of sugar according to the WHO healthy diet guideline turns out to high quite high prevalence of overweight individuals. However, Van Langeveld et al. (2018) found that among the population measured in the Netherlands, obese individuals consume more % energy from 'salt, umami and fat' food and less from 'sweet and fat' food than normal-weight individuals. 
+
+# Citations
+
+Broeks, M. J., Biesbroek, S., Over, E. A., van Gils, P. F., Toxopeus, I., Beukers, M. H., & Temme, E. H. (2020). A social cost-benefit analysis of meat taxation and a fruit and vegetables subsidy for a healthy and sustainable food consumption in the Netherlands. BMC public health, 20(1), 1-12.
+
+De Jonge, J., Van Trijp, H., Goddard, E., & Frewer, L. (2008). Consumer confidence in the safety of food in Canada and the Netherlands: The validation of a generic framework. Food Quality and Preference, 19(5), 439-451.
+
+Van Diepen, S., Scholten, A. M., Korobili, C., Kyrli, D., Tsigga, M., Van Dieijen, T., ... & Grammatikopoulou, M. G. (2011). Greater Mediterranean diet adherence is observed in Dutch compared with Greek university students. Nutrition, Metabolism and Cardiovascular Diseases, 21(7), 534-540.
+
+Van Langeveld, A. W., Teo, P. S., de Vries, J. H., Feskens, E. J., de Graaf, C., & Mars, M. (2018). Dietary taste patterns by sex and weight status in the Netherlands. British Journal of Nutrition, 119(10), 1195-1206.
+
+

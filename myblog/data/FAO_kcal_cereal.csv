@@ -1,0 +1,12 @@
+﻿Domain Code,Domain,Area Code (FAO),Area,Element Code,Element,Item Code,Item,Year Code,Year,Unit,Value,Flag,Flag Description
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2511","Wheat and products","2018","2018","kcal/capita/day","584","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2807","Rice and products","2018","2018","kcal/capita/day","38","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2513","Barley and products","2018","2018","kcal/capita/day","13","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2514","Maize and products","2018","2018","kcal/capita/day","21","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2515","Rye and products","2018","2018","kcal/capita/day","8","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2516","Oats","2018","2018","kcal/capita/day","14","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2520","Cereals, Other","2018","2018","kcal/capita/day","117","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2531","Potatoes and products","2018","2018","kcal/capita/day","127","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2533","Sweet potatoes","2018","2018","kcal/capita/day","2","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2535","Yams","2018","2018","kcal/capita/day","0","Fc","Calculated data"
+"FBS","Food Balances (2014-)","150","Netherlands","664","Food supply (kcal/capita/day)","2534","Roots, Other","2018","2018","kcal/capita/day","0","Fc","Calculated data"
