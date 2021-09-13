@@ -27,9 +27,9 @@ The relevant blog post for this assessment is in https://ilbloggo.netlify.app/po
 
 This assessment is due Fri Sep 17 2021 11.55PM AEST.
 
-My selected country is [FILL].
+My selected country is the Netherlands.
 
-The relevant blog post for this assessment is in [FILL].html
+The relevant blog post for this assessment is in https://ilbloggo.netlify.app/posts/2021-09-12-looks-like-stroopwafels-back-on-the-menu-boys/
 
 - [ ] Selected a new country
 - [ ] Data Story 1
